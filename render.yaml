@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ticketing
+    env: node
+    plan: free
+    region: oregon
+    autoDeploy: true
+    buildCommand: npm install; npm run prisma:generate; npm run build
+    startCommand: npm run prisma:push; npm run start
+    envVars:
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/health
