@@ -3,6 +3,7 @@ import { Outfit, Fira_Code } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
+import { Footer } from "@/components/footer";
 
 const outfit = Outfit({
   variable: "--font-sans",
@@ -29,6 +30,7 @@ export default function RootLayout({
           <SiteHeader />
           {children}
         </ThemeProvider>
+        <Footer />
       </body>
     </html>
   );
