@@ -1,4 +1,4 @@
-import { SignJWT, jwtVerify, generateKeyPair, exportJWK, importJWK } from "jose";
+import { SignJWT, jwtVerify, generateKeyPair, exportJWK, importJWK, type JWK } from "jose";
 
 type Payload = { ticket_id: string; event_id: string; valid_from: number; valid_to: number; nonce: string };
 
@@ -10,8 +10,8 @@ async function getKeys() {
   const priv = process.env.TICKET_PRIVATE_KEY;
   const pub = process.env.TICKET_PUBLIC_KEY;
   if (priv && pub) {
-    const privJwk = JSON.parse(Buffer.from(priv, "base64").toString());
-    const pubJwk = JSON.parse(Buffer.from(pub, "base64").toString());
+    const privJwk = JSON.parse(Buffer.from(priv, "base64").toString()) as JWK;
+    const pubJwk = JSON.parse(Buffer.from(pub, "base64").toString()) as JWK;
     privateKeyPromise = importJWK(privJwk, "EdDSA") as Promise<CryptoKey>;
     publicKeyPromise = importJWK(pubJwk, "EdDSA") as Promise<CryptoKey>;
   } else {

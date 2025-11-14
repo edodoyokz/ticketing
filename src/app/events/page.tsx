@@ -1,15 +1,13 @@
-import { prisma } from "@/lib/db";
-
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Link from "next/link";
 
+const fallbackEvents = [
+  { id: "demo-1", title: "Konser Pembuka", description: "Simulasi event untuk demo." },
+  { id: "demo-2", title: "Festival Budaya", description: "Gunakan sebagai contoh data di staging." },
+];
+
 export default async function EventsPage() {
-  let events: Array<{ id: string; title: string; description: string | null }> = [];
-  try {
-    events = await prisma.event.findMany({ orderBy: { startsAt: "asc" } });
-  } catch {
-    events = [];
-  }
+  const events = fallbackEvents;
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
       <h1 className="text-2xl font-semibold mb-4">Event</h1>
