@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startsAt    DateTime
+  endsAt      DateTime
+  createdAt   DateTime @default(now())
+  ticketTypes TicketType[]
+}
+
+model TicketType {
+  id        String  @id @default(cuid())
+  eventId   String
+  name      String
+  price     Int
+  stock     Int
+  createdAt DateTime @default(now())
+  event     Event   @relation(fields: [eventId], references: [id])
+  orderItems OrderItem[]
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  userId    String
+  status    OrderStatus @default(CREATED)
+  amount    Int         @default(0)
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+  payment   Payment?
+}
+
+model OrderItem {
+  id           String     @id @default(cuid())
+  orderId      String
+  ticketTypeId String
+  quantity     Int        @default(1)
+  price        Int
+  order        Order      @relation(fields: [orderId], references: [id])
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+}
+
+model Payment {
+  id          String       @id @default(cuid())
+  orderId     String       @unique
+  provider    String
+  reference   String       @unique
+  status      PaymentStatus @default(PENDING)
+  amount      Int
+  createdAt   DateTime     @default(now())
+  order       Order        @relation(fields: [orderId], references: [id])
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  orderItemId String @unique
+  eventId   String
+  token     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model GateScan {
+  id        String   @id @default(cuid())
+  ticketId  String
+  scanId    String   @unique
+  createdAt DateTime @default(now())
+}
+
+enum OrderStatus {
+  CREATED
+  PENDING_PAYMENT
+  PAID
+  EXPIRED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+}
